@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "arc-clone", "runtimeExecutable": "npx", "runtimeArgs": ["-y", "http-server@14.1.1", "arcstudio-clone", "-p", "8091", "-c-1"], "port": 8091 }
+  ]
+}
