@@ -1,8 +1,11 @@
-// Sends the Contact Us enquiry form to Karan's Gmail through FormSubmit
-// (https://formsubmit.co). The site is static now, so Elementor's own
+// Sends the Contact Us enquiry form to Karan's Gmail through Web3Forms
+// (https://web3forms.com). The site is static now, so Elementor's own
 // WordPress submit handler has no server to post to; this takes over.
+// The access key is public by design: Web3Forms only ever mails the address
+// the key was created for (karan.arcstudio@gmail.com).
 (function () {
-  var ENDPOINT = 'https://formsubmit.co/ajax/karan.arcstudio@gmail.com';
+  var ENDPOINT = 'https://api.web3forms.com/submit';
+  var ACCESS_KEY = 'c36ac248-fba4-43d0-bb1a-f21917d82d79';
 
   function showMessage(form, text, ok) {
     var old = form.querySelector('.elementor-message');
@@ -39,15 +42,15 @@
     if (label) label.textContent = 'Sending...';
 
     var data = {
+      access_key: ACCESS_KEY,
+      subject: 'New website enquiry - Arc Studio',
+      from_name: 'Arc Studio Website',
+      replyto: value(form, 'email'),
       Name: value(form, 'name'),
       Email: value(form, 'email'),
       Phone: value(form, 'message'),
       Service: service,
-      Message: value(form, 'field_ca588c5'),
-      _replyto: value(form, 'email'),
-      _subject: 'New website enquiry - Arc Studio',
-      _template: 'table',
-      _captcha: 'false'
+      Message: value(form, 'field_ca588c5')
     };
 
     fetch(ENDPOINT, {
@@ -55,9 +58,9 @@
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify(data)
     })
-      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
+      .then(function (r) { return r.json(); })
       .then(function (res) {
-        if (res.ok && String(res.body.success) === 'true') {
+        if (res.success) {
           form.reset();
           showMessage(form, 'Thank you! Your enquiry has been sent. We will get back to you soon.', true);
         } else {
